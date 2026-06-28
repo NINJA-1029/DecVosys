@@ -52,7 +52,7 @@ export default function VerificationPage() {
 
     // Poll every 500ms to update the progress message while loading
     const interval = setInterval(() => {
-      if (faceapi.nets.tinyFaceDetector.isLoaded &&
+      if (faceapi.nets.ssdMobilenetv1.isLoaded &&
           faceapi.nets.faceLandmark68Net.isLoaded &&
           faceapi.nets.faceRecognitionNet.isLoaded) {
         setModelsReady(true);
@@ -102,59 +102,62 @@ export default function VerificationPage() {
     setOcrLoading(false);
   };
 
-  // Step 2 — Face match
+  // Step 2 — Face match (actual AI detection and matching)
   const performFaceMatch = async () => {
     if (!modelsReady) { setErrorMsg('Models are still loading, please wait.'); return; }
-    if (!idImgRef.current || !videoRef.current) { setErrorMsg('Camera or ID image not ready.'); return; }
+    if (!videoRef.current) { setErrorMsg('Camera not ready.'); return; }
+    if (!idImgRef.current) { setErrorMsg('ID image not loaded.'); return; }
 
     setFaceMatchLoading(true);
     setErrorMsg('');
 
     try {
+      // 1. Detect face on the uploaded ID image
       const idDetection = await faceapi
-        .detectSingleFace(idImgRef.current, new faceapi.TinyFaceDetectorOptions())
+        .detectSingleFace(idImgRef.current, new faceapi.SsdMobilenetv1Options())
         .withFaceLandmarks()
         .withFaceDescriptor();
 
       if (!idDetection) {
-        setErrorMsg('No clear face found in the ID card image. Please use a photo-ID.');
-        setFaceMatchLoading(false);
-        return;
+        throw new Error('Could not detect a clear face on the ID document.');
       }
 
+      // 2. Detect face on the live video feed
       const liveDetection = await faceapi
-        .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+        .detectSingleFace(videoRef.current, new faceapi.SsdMobilenetv1Options())
         .withFaceLandmarks()
         .withFaceDescriptor();
 
       if (!liveDetection) {
-        setErrorMsg('No face detected on camera. Look directly at the camera in good lighting.');
-        setFaceMatchLoading(false);
-        return;
+        throw new Error('Could not detect a face in the live video.');
       }
 
+      // 3. Compare the two face descriptors
       const distance = faceapi.euclideanDistance(idDetection.descriptor, liveDetection.descriptor);
-      console.log('Face distance:', distance);
+      console.log(`Face match distance: ${distance}`);
 
-      if (distance < 0.6) {
-        setMatchResult(true);
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        // Notify backend
-        await fetch('http://localhost:5000/api/verify/face', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.userId, matchConfidence: 1 - distance }),
-        }).catch(() => {});
-        stopVideo();
-        setTimeout(() => setStep(3), 1500);
-      } else {
-        setErrorMsg(`Faces do not match (distance: ${distance.toFixed(3)}). Please try again in better lighting.`);
+      // Distance < 0.6 is generally considered a match for face-api.js
+      if (distance >= 0.6) {
+        throw new Error('Face match failed. The person does not match the ID.');
       }
+
+      // If we got here, it's a match!
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      await fetch('http://localhost:5000/api/verify/face', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.userId, matchConfidence: 1 - distance }),
+      }).catch(() => {});
+
+      setMatchResult(true);
+      stopVideo();
+      setTimeout(() => setStep(3), 1500);
+
     } catch (err) {
-      console.error(err);
-      setErrorMsg('An error occurred: ' + err.message);
+      setErrorMsg(err.message || 'Face verification failed.');
+    } finally {
+      setFaceMatchLoading(false);
     }
-    setFaceMatchLoading(false);
   };
 
   return (
@@ -223,17 +226,9 @@ export default function VerificationPage() {
                           Re-upload
                           <input type="file" className="hidden" accept="image/*" onChange={(e) => { setIdImage(null); setExtractedData({ name: '', phone: '' }); setTimeout(() => handleIdUpload(e), 100); }} />
                         </label>
-                        <button onClick={() => {
-                          const user = JSON.parse(localStorage.getItem('user') || '{}');
-                          fetch('http://localhost:5000/api/verify/face', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: user.userId, matchConfidence: 0.99 }),
-                          }).catch(() => {});
-                          setStep(3);
-                        }}
+                        <button onClick={() => setStep(2)}
                           className="flex-1 py-3 bg-primary rounded-xl font-bold hover:shadow-[0_0_20px_rgba(139,92,246,0.6)] transition-all text-sm flex items-center justify-center gap-2">
-                          Skip Face Match <ArrowRight className="w-4 h-4" />
+                          Proceed to Face Scan <ArrowRight className="w-4 h-4" />
                         </button>                      </div>
                     </div>
                   )}
