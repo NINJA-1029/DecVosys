@@ -1,4 +1,4 @@
-// Global face-api model loader
+// Global face-api model loader — uses advanced models
 import * as faceapi from 'face-api.js';
 
 let modelsLoadedPromise = null;
@@ -12,11 +12,11 @@ export function preloadFaceModels() {
   const loadModel = (net) => net.loadFromUri('/models').then(() => { loadedModelsCount++; });
 
   modelsLoadedPromise = Promise.all([
-    loadModel(faceapi.nets.tinyFaceDetector),
+    loadModel(faceapi.nets.ssdMobilenetv1),
     loadModel(faceapi.nets.faceLandmark68Net),
-    loadModel(faceapi.nets.faceRecognitionNet)
+    loadModel(faceapi.nets.faceRecognitionNet),
   ]).then(() => {
-    console.log('✅ All face models loaded');
+    console.log('✅ Face models loaded (3/3)');
     return true;
   }).catch((err) => {
     console.error('❌ Face model load error:', err);
@@ -32,7 +32,7 @@ export function getModelsLoaded() {
 }
 
 export function isModelReady() {
-  return faceapi.nets.tinyFaceDetector.isLoaded &&
+  return faceapi.nets.ssdMobilenetv1.isLoaded &&
          faceapi.nets.faceLandmark68Net.isLoaded &&
          faceapi.nets.faceRecognitionNet.isLoaded;
 }
