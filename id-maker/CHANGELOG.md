@@ -8,3 +8,4 @@
 - Refine photo upload aspect ratio cropping
 - Update placeholder text in generation form
 - Add visual feedback during hashing process
+- Fix alignment of organization name on canvas
