@@ -1,2 +1,3 @@
 - Optimize canvas gradient rendering performance
 - Refactor QR code generation payload structure
+- Update CSS variables for better dark mode contrast
