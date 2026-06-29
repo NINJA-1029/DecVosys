@@ -13,3 +13,4 @@
 - Refactor ID counter logic in localStorage
 - Add fallback for unsupported Web Crypto API
 - Enhance button hover micro-animations
+- Adjust ambient glow positioning in CSS
