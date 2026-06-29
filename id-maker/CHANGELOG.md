@@ -5,3 +5,4 @@
 - Add defensive checks for MetaMask network switching
 - Improve error handling in contract verification calls
 - Adjust canvas scaling for high-DPI displays
+- Refine photo upload aspect ratio cropping
