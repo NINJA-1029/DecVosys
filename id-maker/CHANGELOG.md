@@ -15,3 +15,4 @@
 - Enhance button hover micro-animations
 - Adjust ambient glow positioning in CSS
 - Refactor blockchain event listeners
+- Improve UI feedback for unregistered DVS IDs
