@@ -1,1 +1,2 @@
 - Optimize canvas gradient rendering performance
+- Refactor QR code generation payload structure
