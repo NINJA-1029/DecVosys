@@ -4,3 +4,4 @@
 - Enhance form validation logic for mobile numbers
 - Add defensive checks for MetaMask network switching
 - Improve error handling in contract verification calls
+- Adjust canvas scaling for high-DPI displays
