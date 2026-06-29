@@ -17,3 +17,4 @@
 - Refactor blockchain event listeners
 - Improve UI feedback for unregistered DVS IDs
 - Update dependency version constraints
+- Finalize ID Maker module integration into monorepo
