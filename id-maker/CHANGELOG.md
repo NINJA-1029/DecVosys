@@ -7,3 +7,4 @@
 - Adjust canvas scaling for high-DPI displays
 - Refine photo upload aspect ratio cropping
 - Update placeholder text in generation form
+- Add visual feedback during hashing process
