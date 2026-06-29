@@ -2,3 +2,4 @@
 - Refactor QR code generation payload structure
 - Update CSS variables for better dark mode contrast
 - Enhance form validation logic for mobile numbers
+- Add defensive checks for MetaMask network switching
