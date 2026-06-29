@@ -1,0 +1,1 @@
+- Optimize canvas gradient rendering performance
