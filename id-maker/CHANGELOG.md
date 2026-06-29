@@ -6,3 +6,4 @@
 - Improve error handling in contract verification calls
 - Adjust canvas scaling for high-DPI displays
 - Refine photo upload aspect ratio cropping
+- Update placeholder text in generation form
