@@ -10,3 +10,4 @@
 - Add visual feedback during hashing process
 - Fix alignment of organization name on canvas
 - Update security badge typography
+- Refactor ID counter logic in localStorage
