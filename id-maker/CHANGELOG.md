@@ -14,3 +14,4 @@
 - Add fallback for unsupported Web Crypto API
 - Enhance button hover micro-animations
 - Adjust ambient glow positioning in CSS
+- Refactor blockchain event listeners
