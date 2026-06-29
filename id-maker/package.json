@@ -1,0 +1,23 @@
+{
+  "name": "decvosys-id-maker",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Blockchain-secured ID Card Generator for the Decvosys Voting System",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js --network localhost"
+  },
+  "dependencies": {
+    "ethers": "^6.16.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "hardhat": "^2.22.0",
+    "vite": "^8.0.1"
+  }
+}
