@@ -12,3 +12,4 @@
 - Update security badge typography
 - Refactor ID counter logic in localStorage
 - Add fallback for unsupported Web Crypto API
+- Enhance button hover micro-animations
